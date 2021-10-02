@@ -12,4 +12,13 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation rootProject.ext.androidx_lib["appcompat"]
     api project(':module-map')
+
+    //核心模块
+    debugImplementation "io.github.didi.dokit:dokitx:3.4.0-alpha04"
+    //文件同步模块
+    debugImplementation "io.github.didi.dokit:dokitx-ft:3.4.0-alpha04"
+    //一机多控模块
+    debugImplementation "io.github.didi.dokit:dokitx-mc:3.4.0-alpha04"
+    //weex模块
+    debugImplementation "io.github.didi.dokit:dokitx-weex:3.4.0-alpha04"
 }
