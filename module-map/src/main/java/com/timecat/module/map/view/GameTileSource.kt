@@ -54,8 +54,12 @@ class GameTileSource : OnlineTileSourceBase {
 
     //https://gim.appsample.net/teyvat/v21/10/tile-2_-16.jpg
     override fun getTileURLString(pMapTileIndex: Long): String {
-        LogUtil.se("$baseUrl${MapTileIndex.getZoom(pMapTileIndex)}/tile-${MapTileIndex.getX(pMapTileIndex)}_${MapTileIndex.getY(pMapTileIndex)}$mImageFilenameEnding")
-        return (baseUrl + MapTileIndex.getZoom(pMapTileIndex) + "/tile-" + MapTileIndex.getX(pMapTileIndex) + "_" + MapTileIndex.getY(pMapTileIndex)
-            + mImageFilenameEnding)
+        val zoom = MapTileIndex.getZoom(pMapTileIndex)
+        val x = MapTileIndex.getX(pMapTileIndex)
+        val y = MapTileIndex.getY(pMapTileIndex)
+        val tx = x - (1 shl (zoom - 5))
+        val ty = -y + (1 shl (zoom - 5))-1
+        LogUtil.se("$baseUrl${zoom}/tile-${tx}_${ty}$mImageFilenameEnding")
+        return "$baseUrl${zoom}/tile-${tx}_${ty}$mImageFilenameEnding"
     }
 }

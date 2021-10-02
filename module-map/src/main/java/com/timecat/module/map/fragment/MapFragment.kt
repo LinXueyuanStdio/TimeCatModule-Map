@@ -1,39 +1,29 @@
 package com.timecat.module.map.fragment
 
-import android.graphics.Color
+import android.graphics.Point
 import android.location.Location
-import android.util.DisplayMetrics
 import android.view.InputDevice
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnGenericMotionListener
-import com.timecat.component.setting.DEF
+import com.timecat.component.commonsdk.utils.override.LogUtil
 import com.timecat.module.map.BuildConfig
 import com.timecat.module.map.R
 import com.timecat.module.map.view.GameTileSource
+import com.timecat.module.map.view.UserLocationProvider
 import com.timecat.page.base.base.simple.BaseSimpleSupportFragment
 import com.xiaojinzi.component.anno.FragmentAnno
 import org.osmdroid.config.Configuration
+import org.osmdroid.tileprovider.MapTileProviderBasic
+import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
+import org.osmdroid.util.TileSystemWebMercator
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.*
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.IMyLocationConsumer
 import org.osmdroid.views.overlay.mylocation.IMyLocationProvider
-import org.osmdroid.views.overlay.TilesOverlay
-
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory
-
-import org.osmdroid.tileprovider.MapTileProviderBasic
-import org.osmdroid.tileprovider.modules.MapTileModuleProviderBase
-
-import org.osmdroid.tileprovider.util.SimpleRegisterReceiver
-
-import org.osmdroid.tileprovider.MapTileProviderArray
-
-import org.osmdroid.tileprovider.modules.MapTileAssetsProvider
-import org.osmdroid.tileprovider.tilesource.XYTileSource
 
 
 /**
@@ -49,6 +39,7 @@ class MapFragment : BaseSimpleSupportFragment() {
     lateinit var mMapView: MapView
     override fun bindView(view: View) {
         super.bindView(view)
+//        MapView.setTileSystem(GameTileSystem())
         mMapView = view.findViewById(R.id.mapView)
     }
 
@@ -60,15 +51,7 @@ class MapFragment : BaseSimpleSupportFragment() {
         Configuration.getInstance().setUserAgentValue(BuildConfig.LIBRARY_PACKAGE_NAME)
 
 //        val prov = MapTileAssetsProvider(SimpleRegisterReceiver(context), _mActivity.assets)
-//
 //        mMapView.tileProvider = MapTileProviderArray(TileSourceFactory.MAPNIK, SimpleRegisterReceiver(context), arrayOf<MapTileModuleProviderBase>(prov))
-        val provider = MapTileProviderBasic(_mActivity)
-        provider.tileSource = GameTileSource(
-            "GenshinImpact", 0, 10, 256, ".jpg",
-            arrayOf("https://gim.appsample.net/teyvat/v21/"),
-            "© Genshin Impact contributors"
-        )
-        mMapView.tileProvider = provider
         mMapView.setOnGenericMotionListener(OnGenericMotionListener { v, event ->
             /**
              * mouse wheel zooming ftw
@@ -95,6 +78,26 @@ class MapFragment : BaseSimpleSupportFragment() {
         mMapView.setMultiTouchControls(true)
         mMapView.isTilesScaledToDpi = true
         mMapView.setUseDataConnection(true)
+        mMapView.isHorizontalMapRepetitionEnabled = false
+        mMapView.isVerticalMapRepetitionEnabled = false
+//        mMapView.tilesScaleFactor = 0.5f
+        mMapView.minZoomLevel = 6.0
+        mMapView.maxZoomLevel = 11.0
+        mMapView.setZoomRounding(true)
+        val p = Point()
+        MapView.getTileSystem().TileXYToPixelXY(4, 4, p)
+        val geoPoint = GeoPoint(0.0, 0.0)
+        MapView.getTileSystem().PixelXYToLatLong(p.x, p.y, 6.0, geoPoint)
+        LogUtil.e(p)
+        LogUtil.e(geoPoint)
+        mMapView.setScrollableAreaLimitDouble(
+            BoundingBox(
+                TileSystemWebMercator.MaxLatitude,
+                geoPoint.longitude,//TileSystemWebMercator.MinLongitude + geoPoint.longitude,
+                geoPoint.latitude,//TileSystemWebMercator.MaxLatitude - geoPoint.latitude,
+                TileSystemWebMercator.MinLongitude
+            )
+        )
     }
 
     override fun onResume() {
@@ -102,7 +105,8 @@ class MapFragment : BaseSimpleSupportFragment() {
 //        Configuration.getInstance().load(_mActivity.applicationContext, DEF.block())
         mMapView.onResume()
     }
-//    https://gim.appsample.net/teyvat/v21/10/tile-8_-14.jpg
+
+    //    https://gim.appsample.net/teyvat/v21/10/tile-8_-14.jpg
     override fun onPause() {
         super.onPause()
 //        Configuration.getInstance().save(_mActivity.applicationContext, DEF.block())
@@ -113,10 +117,18 @@ class MapFragment : BaseSimpleSupportFragment() {
     var mGpsMyLocationProvider: GpsMyLocationProvider? = null
     var mMyLocationOverlay: ItemizedOverlayWithFocus<OverlayItem>? = null
     protected fun addOverlays() {
-        val mGpsMyLocationProvider = GpsMyLocationProvider(context)
-        mGpsMyLocationProvider.startLocationProvider(object : IMyLocationConsumer {
+        val provider = MapTileProviderBasic(_mActivity)
+        val tileSource = GameTileSource(
+            "GenshinImpact", 6, 11, 256, ".jpg",
+            arrayOf("https://gim.appsample.net/teyvat/v21/"),
+            "© Genshin Impact contributors"
+        )
+        provider.tileSource = tileSource
+        mMapView.tileProvider = provider
+        val userLocationProvider = UserLocationProvider()
+        userLocationProvider.startLocationProvider(object : IMyLocationConsumer {
             override fun onLocationChanged(location: Location, source: IMyLocationProvider) {
-                mGpsMyLocationProvider.stopLocationProvider()
+                userLocationProvider.stopLocationProvider()
                 if (mMyLocationOverlay == null) {
                     val items = ArrayList<OverlayItem>()
                     items.add(OverlayItem("Me", "My Location", GeoPoint(location)));
@@ -161,6 +173,7 @@ class MapFragment : BaseSimpleSupportFragment() {
         mMapView.overlays.add(mRotationGestureOverlay)
 
         val miniMapOverlay = MinimapOverlay(context, mMapView.getTileRequestCompleteHandler())
+        miniMapOverlay.setTileSource(tileSource)
         mMapView.overlays.add(miniMapOverlay)
 
         val copyrightOverlay = CopyrightOverlay(activity)

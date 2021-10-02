@@ -28,7 +28,7 @@
         app:closeIconVisible="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="40/40" />
+        android:text="40 / 40" />
 
     <!--左中-->
     <com.google.android.material.slider.Slider
@@ -64,8 +64,8 @@
         android:layout_height="48dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/map_icon"
-        tools:hint="探索度 20%"
-        tools:msg="大地图" />
+        app:hint="探索度 20%"
+        app:msg="大地图" />
     <!--右下-->
     <ImageView
         android:id="@+id/close"
