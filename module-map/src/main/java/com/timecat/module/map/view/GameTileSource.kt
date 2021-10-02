@@ -1,6 +1,5 @@
 package com.timecat.module.map.view
 
-import com.timecat.component.commonsdk.utils.override.LogUtil
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase
 import org.osmdroid.tileprovider.tilesource.TileSourcePolicy
 import org.osmdroid.util.MapTileIndex
@@ -57,9 +56,10 @@ class GameTileSource : OnlineTileSourceBase {
         val zoom = MapTileIndex.getZoom(pMapTileIndex)
         val x = MapTileIndex.getX(pMapTileIndex)
         val y = MapTileIndex.getY(pMapTileIndex)
-        val tx = x - (1 shl (zoom - 5))
-        val ty = -y + (1 shl (zoom - 5))-1
-        LogUtil.se("$baseUrl${zoom}/tile-${tx}_${ty}$mImageFilenameEnding")
+        val offset = 1 shl (zoom - 5)
+        val tx = x - offset
+        val ty = -y + offset - 1
+//        LogUtil.se("$baseUrl${zoom}/tile-${tx}_${ty}$mImageFilenameEnding")
         return "$baseUrl${zoom}/tile-${tx}_${ty}$mImageFilenameEnding"
     }
 }

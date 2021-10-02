@@ -2,28 +2,42 @@ package com.timecat.module.map.fragment
 
 import android.graphics.Point
 import android.location.Location
+import android.os.Build
 import android.view.InputDevice
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnGenericMotionListener
-import com.timecat.component.commonsdk.utils.override.LogUtil
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.SeekBar
+import android.widget.TextView
+import com.google.android.material.chip.Chip
+import com.timecat.layout.ui.layout.setShakelessClickListener
+import com.timecat.layout.ui.standard.textview.HintTextView
 import com.timecat.module.map.BuildConfig
 import com.timecat.module.map.R
 import com.timecat.module.map.view.GameTileSource
+import com.timecat.module.map.view.SeekBarChangeListener
 import com.timecat.module.map.view.UserLocationProvider
+import com.timecat.module.map.view.VerticalSeekBar
 import com.timecat.page.base.base.simple.BaseSimpleSupportFragment
 import com.xiaojinzi.component.anno.FragmentAnno
 import org.osmdroid.config.Configuration
+import org.osmdroid.events.MapListener
+import org.osmdroid.events.ScrollEvent
+import org.osmdroid.events.ZoomEvent
 import org.osmdroid.tileprovider.MapTileProviderBasic
 import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.util.TileSystemWebMercator
+import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.*
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.IMyLocationConsumer
 import org.osmdroid.views.overlay.mylocation.IMyLocationProvider
+import kotlin.math.roundToInt
 
 
 /**
@@ -36,14 +50,61 @@ import org.osmdroid.views.overlay.mylocation.IMyLocationProvider
 @FragmentAnno("map/MapFragment")
 class MapFragment : BaseSimpleSupportFragment() {
     override fun layout(): Int = R.layout.map_layout_main
-    lateinit var mMapView: MapView
     override fun bindView(view: View) {
         super.bindView(view)
 //        MapView.setTileSystem(GameTileSystem())
         mMapView = view.findViewById(R.id.mapView)
+        water= view. findViewById<Chip>(R.id.water)
+        zoom_slider= view. findViewById<LinearLayout>(R.id.zoom_slider)
+        zoom_add= view. findViewById<TextView>(R.id.zoom_add)
+        seek_zoom= view. findViewById<VerticalSeekBar>(R.id.seek_zoom)
+        zoom_sub= view. findViewById<TextView>(R.id.zoom_sub)
+        map_icon= view. findViewById<ImageView>(R.id.map_icon)
+        map_name= view. findViewById<HintTextView>(R.id.map_name)
+        close= view. findViewById<ImageView>(R.id.close)
     }
-
+    lateinit var mMapView: MapView
+    private lateinit var water: Chip
+    private lateinit var zoom_slider: LinearLayout
+    private lateinit var zoom_add: TextView
+    private lateinit var seek_zoom: VerticalSeekBar
+    private lateinit var zoom_sub: TextView
+    private lateinit var map_icon: ImageView
+    private lateinit var map_name: HintTextView
+    private lateinit var close: ImageView
+    val l = object : SeekBarChangeListener {
+        override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+            mMapView.controller.zoomTo(progress.toDouble())
+        }
+    }
     override fun lazyInit() {
+        seek_zoom.max = 11
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            seek_zoom.min = 6
+        }
+        seek_zoom.setOnSeekBarChangeListener(l)
+        zoom_add.setShakelessClickListener {
+            seek_zoom.progress += 1
+        }
+        zoom_sub.setShakelessClickListener {
+            seek_zoom.progress -= 1
+        }
+        map_name.setShakelessClickListener {
+        }
+        close.setShakelessClickListener {
+        }
+        mMapView.addMapListener(object :MapListener{
+            override fun onScroll(event: ScrollEvent?): Boolean {
+                return false
+            }
+
+            override fun onZoom(event: ZoomEvent): Boolean {
+                seek_zoom.setOnSeekBarChangeListener(null)
+                seek_zoom.progress = event.zoomLevel.roundToInt()
+                seek_zoom.setOnSeekBarChangeListener(l)
+                return true
+            }
+        })
         Configuration.getInstance().isDebugMapTileDownloader = true
         Configuration.getInstance().isDebugMapView = true
         Configuration.getInstance().isDebugTileProviders = true
@@ -88,13 +149,11 @@ class MapFragment : BaseSimpleSupportFragment() {
         MapView.getTileSystem().TileXYToPixelXY(4, 4, p)
         val geoPoint = GeoPoint(0.0, 0.0)
         MapView.getTileSystem().PixelXYToLatLong(p.x, p.y, 6.0, geoPoint)
-        LogUtil.e(p)
-        LogUtil.e(geoPoint)
         mMapView.setScrollableAreaLimitDouble(
             BoundingBox(
                 TileSystemWebMercator.MaxLatitude,
-                geoPoint.longitude,//TileSystemWebMercator.MinLongitude + geoPoint.longitude,
-                geoPoint.latitude,//TileSystemWebMercator.MaxLatitude - geoPoint.latitude,
+                geoPoint.longitude,
+                geoPoint.latitude,
                 TileSystemWebMercator.MinLongitude
             )
         )
