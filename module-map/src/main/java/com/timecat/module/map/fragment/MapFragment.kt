@@ -7,21 +7,15 @@ import android.view.InputDevice
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnGenericMotionListener
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.SeekBar
-import android.widget.TextView
-import com.afollestad.materialdialogs.customview.customView
+import android.widget.*
+import androidx.annotation.IntRange
+import com.afollestad.vvalidator.util.onProgressChanged
 import com.google.android.material.chip.Chip
-import com.timecat.layout.ui.business.form.VerticalContainer
-import com.timecat.layout.ui.business.setting.ContainerItem
 import com.timecat.layout.ui.layout.setShakelessClickListener
 import com.timecat.layout.ui.standard.textview.HintTextView
-import com.timecat.middle.block.ext.showDialog
 import com.timecat.module.map.BuildConfig
 import com.timecat.module.map.R
 import com.timecat.module.map.view.GameTileSource
-import com.timecat.module.map.view.SeekBarChangeListener
 import com.timecat.module.map.view.UserLocationProvider
 import com.timecat.module.map.view.VerticalSeekBar
 import com.timecat.page.base.base.simple.BaseSimpleSupportFragment
@@ -77,19 +71,50 @@ class MapFragment : BaseSimpleSupportFragment() {
     private lateinit var map_icon: ImageView
     private lateinit var map_name: HintTextView
     private lateinit var close: ImageView
-    val l = object : SeekBarChangeListener {
-        override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-            mMapView.controller.zoomTo(progress.toDouble())
-        }
+    val l = SeekBarListener(
+        seek_zoom, 500,
+    ) { progress ->
+        mMapView.controller.zoomTo(progress.toDouble(), 6)
     }
 
-    fun switchMap() {
-        _mActivity.showDialog {
-            val view = ContainerItem(context).apply {
+    class SeekBarListener(
+        seekBar: SeekBar,
+        @IntRange(from = 0, to = 10000)
+        val debounce: Int = 0,
+        cb: (Int) -> Unit
+    ) : SeekBar.OnSeekBarChangeListener {
+        val callbackRunner = Runnable { cb(seekBar.progress) }
 
+        override fun onProgressChanged(
+            seekBar: SeekBar,
+            progress: Int,
+            fromUser: Boolean
+        ) {
+            if (!fromUser) return
+            seekBar.removeCallbacks(callbackRunner)
+            if (debounce == 0) {
+                callbackRunner.run()
+            } else {
+                seekBar.postDelayed(callbackRunner, debounce.toLong())
             }
-            customView(view = view)
         }
+
+        override fun onStartTrackingTouch(seekBar: SeekBar) = Unit
+
+        override fun onStopTrackingTouch(seekBar: SeekBar) = Unit
+    }
+
+    fun switchMap(selected: Int = 0) {
+        //TODO 初版不需要切换地图
+//        _mActivity.showDialog {
+//            title(text = "选择地图")
+//            val data = listOf(
+//                "主地图"
+//            )
+//            listItemsSingleChoice(items = data, initialSelection = selected) { _, idx, text ->
+//
+//            }
+//        }
     }
 
     fun closeMap() {
@@ -136,7 +161,7 @@ class MapFragment : BaseSimpleSupportFragment() {
         Configuration.getInstance().isDebugMode = true
         Configuration.getInstance().setUserAgentValue(BuildConfig.LIBRARY_PACKAGE_NAME)
 
-//        val prov = MapTileAssetsProvider(SimpleRegisterReceiver(context), _mActivity.assets)
+//        val prov = MapTileAssetsProvider(S impleRegisterReceiver(context), _mActivity.assets)
 //        mMapView.tileProvider = MapTileProviderArray(TileSourceFactory.MAPNIK, SimpleRegisterReceiver(context), arrayOf<MapTileModuleProviderBase>(prov))
         mMapView.setOnGenericMotionListener(OnGenericMotionListener { v, event ->
             /**
@@ -166,7 +191,6 @@ class MapFragment : BaseSimpleSupportFragment() {
         mMapView.setUseDataConnection(true)
         mMapView.isHorizontalMapRepetitionEnabled = false
         mMapView.isVerticalMapRepetitionEnabled = false
-//        mMapView.tilesScaleFactor = 0.5f
         mMapView.minZoomLevel = 6.0
         mMapView.maxZoomLevel = 11.0
         mMapView.setZoomRounding(true)
