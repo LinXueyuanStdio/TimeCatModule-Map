@@ -65,17 +65,17 @@
             android:textStyle="bold"
             tools:ignore="ImageContrastCheck" />
 
-        <com.timecat.module.map.view.VerticalSeekBarWrapper
+        <com.timecat.module.map.view.zoom.VerticalSeekBarWrapper
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_weight="1">
 
-            <com.timecat.module.map.view.VerticalSeekBar
+            <com.timecat.module.map.view.zoom.VerticalSeekBar
                 android:id="@+id/seek_zoom"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 app:seekBarRotation="CW270" />
-        </com.timecat.module.map.view.VerticalSeekBarWrapper>
+        </com.timecat.module.map.view.zoom.VerticalSeekBarWrapper>
 
         <TextView
             android:id="@+id/zoom_sub"

@@ -8,16 +8,15 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnGenericMotionListener
 import android.widget.*
-import androidx.annotation.IntRange
-import com.afollestad.vvalidator.util.onProgressChanged
 import com.google.android.material.chip.Chip
 import com.timecat.layout.ui.layout.setShakelessClickListener
 import com.timecat.layout.ui.standard.textview.HintTextView
 import com.timecat.module.map.BuildConfig
 import com.timecat.module.map.R
 import com.timecat.module.map.view.GameTileSource
+import com.timecat.module.map.view.zoom.SeekBarListener
 import com.timecat.module.map.view.UserLocationProvider
-import com.timecat.module.map.view.VerticalSeekBar
+import com.timecat.module.map.view.zoom.VerticalSeekBar
 import com.timecat.page.base.base.simple.BaseSimpleSupportFragment
 import com.xiaojinzi.component.anno.FragmentAnno
 import org.osmdroid.config.Configuration
@@ -75,33 +74,6 @@ class MapFragment : BaseSimpleSupportFragment() {
         seek_zoom, 500,
     ) { progress ->
         mMapView.controller.zoomTo(progress.toDouble(), 6)
-    }
-
-    class SeekBarListener(
-        seekBar: SeekBar,
-        @IntRange(from = 0, to = 10000)
-        val debounce: Int = 0,
-        cb: (Int) -> Unit
-    ) : SeekBar.OnSeekBarChangeListener {
-        val callbackRunner = Runnable { cb(seekBar.progress) }
-
-        override fun onProgressChanged(
-            seekBar: SeekBar,
-            progress: Int,
-            fromUser: Boolean
-        ) {
-            if (!fromUser) return
-            seekBar.removeCallbacks(callbackRunner)
-            if (debounce == 0) {
-                callbackRunner.run()
-            } else {
-                seekBar.postDelayed(callbackRunner, debounce.toLong())
-            }
-        }
-
-        override fun onStartTrackingTouch(seekBar: SeekBar) = Unit
-
-        override fun onStopTrackingTouch(seekBar: SeekBar) = Unit
     }
 
     fun switchMap(selected: Int = 0) {
