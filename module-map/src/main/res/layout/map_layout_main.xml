@@ -17,6 +17,16 @@
     <!--        android:orientation="vertical"-->
     <!--        app:layout_constraintStart_toStartOf="parent"-->
     <!--        app:layout_constraintTop_toTopOf="parent" />-->
+    <ImageView
+        android:id="@+id/close"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/close"
+        android:padding="@dimen/spacing_tiny"
+        android:src="@drawable/ic_close"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
     <!--右上-->
     <com.google.android.material.chip.Chip
         android:id="@+id/water"
@@ -87,6 +97,7 @@
         android:id="@+id/map_icon"
         android:layout_width="48dp"
         android:layout_height="48dp"
+        android:layout_marginBottom="@dimen/spacing_small"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/close"
         android:padding="@dimen/spacing_tiny"
@@ -98,20 +109,12 @@
         android:id="@+id/map_name"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
+        android:layout_marginBottom="@dimen/spacing_small"
         app:hint="探索度 20%"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/map_icon"
         app:msg="大地图" />
     <!--右下-->
-    <ImageView
-        android:id="@+id/close"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="@string/close"
-        android:padding="@dimen/spacing_tiny"
-        android:src="@drawable/ic_close"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

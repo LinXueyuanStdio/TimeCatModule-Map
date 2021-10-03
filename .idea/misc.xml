@@ -8,6 +8,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="../../../.gradle/caches/transforms-3/7e08eafedb9b372fa97323ac16403235/transformed/jetified-core-3.3.0/res/layout/md_dialog_stub_buttons.xml" value="0.2572463768115942" />
+        <entry key="../../../.gradle/caches/transforms-3/e915aabef509a6a761b758b114b64c05/transformed/jetified-bottomsheets-3.3.0/res/layout/md_dialog_base_bottomsheet.xml" value="0.2572463768115942" />
         <entry key="module-map/src/main/res/layout/map_layout_main.xml" value="0.21354166666666666" />
       </map>
     </option>

@@ -11,9 +11,13 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.TextView
+import com.afollestad.materialdialogs.customview.customView
 import com.google.android.material.chip.Chip
+import com.timecat.layout.ui.business.form.VerticalContainer
+import com.timecat.layout.ui.business.setting.ContainerItem
 import com.timecat.layout.ui.layout.setShakelessClickListener
 import com.timecat.layout.ui.standard.textview.HintTextView
+import com.timecat.middle.block.ext.showDialog
 import com.timecat.module.map.BuildConfig
 import com.timecat.module.map.R
 import com.timecat.module.map.view.GameTileSource
@@ -54,15 +58,16 @@ class MapFragment : BaseSimpleSupportFragment() {
         super.bindView(view)
 //        MapView.setTileSystem(GameTileSystem())
         mMapView = view.findViewById(R.id.mapView)
-        water= view. findViewById<Chip>(R.id.water)
-        zoom_slider= view. findViewById<LinearLayout>(R.id.zoom_slider)
-        zoom_add= view. findViewById<TextView>(R.id.zoom_add)
-        seek_zoom= view. findViewById<VerticalSeekBar>(R.id.seek_zoom)
-        zoom_sub= view. findViewById<TextView>(R.id.zoom_sub)
-        map_icon= view. findViewById<ImageView>(R.id.map_icon)
-        map_name= view. findViewById<HintTextView>(R.id.map_name)
-        close= view. findViewById<ImageView>(R.id.close)
+        water = view.findViewById(R.id.water)
+        zoom_slider = view.findViewById(R.id.zoom_slider)
+        zoom_add = view.findViewById(R.id.zoom_add)
+        seek_zoom = view.findViewById(R.id.seek_zoom)
+        zoom_sub = view.findViewById(R.id.zoom_sub)
+        map_icon = view.findViewById(R.id.map_icon)
+        map_name = view.findViewById(R.id.map_name)
+        close = view.findViewById(R.id.close)
     }
+
     lateinit var mMapView: MapView
     private lateinit var water: Chip
     private lateinit var zoom_slider: LinearLayout
@@ -77,23 +82,42 @@ class MapFragment : BaseSimpleSupportFragment() {
             mMapView.controller.zoomTo(progress.toDouble())
         }
     }
+
+    fun switchMap() {
+        _mActivity.showDialog {
+            val view = ContainerItem(context).apply {
+
+            }
+            customView(view = view)
+        }
+    }
+
+    fun closeMap() {
+
+    }
+
     override fun lazyInit() {
         seek_zoom.max = 11
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             seek_zoom.min = 6
         }
         seek_zoom.setOnSeekBarChangeListener(l)
-        zoom_add.setShakelessClickListener {
+        zoom_add.setOnClickListener {
             seek_zoom.progress += 1
         }
-        zoom_sub.setShakelessClickListener {
+        zoom_sub.setOnClickListener {
             seek_zoom.progress -= 1
         }
+        map_icon.setShakelessClickListener {
+            switchMap()
+        }
         map_name.setShakelessClickListener {
+            switchMap()
         }
         close.setShakelessClickListener {
+            closeMap()
         }
-        mMapView.addMapListener(object :MapListener{
+        mMapView.addMapListener(object : MapListener {
             override fun onScroll(event: ScrollEvent?): Boolean {
                 return false
             }
@@ -105,6 +129,7 @@ class MapFragment : BaseSimpleSupportFragment() {
                 return true
             }
         })
+        mMapView.zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
         Configuration.getInstance().isDebugMapTileDownloader = true
         Configuration.getInstance().isDebugMapView = true
         Configuration.getInstance().isDebugTileProviders = true
