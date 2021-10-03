@@ -1,4 +1,4 @@
-package com.timecat.module.map.view
+package com.timecat.module.map.view.zoom
 
 import android.annotation.SuppressLint
 import android.content.Context
