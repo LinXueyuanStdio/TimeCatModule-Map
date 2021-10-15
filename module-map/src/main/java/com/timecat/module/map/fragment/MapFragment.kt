@@ -13,9 +13,8 @@ import com.timecat.layout.ui.layout.setShakelessClickListener
 import com.timecat.layout.ui.standard.textview.HintTextView
 import com.timecat.module.map.BuildConfig
 import com.timecat.module.map.R
-import com.timecat.module.map.view.GameTileSource
+import com.timecat.module.map.view.*
 import com.timecat.module.map.view.zoom.SeekBarListener
-import com.timecat.module.map.view.UserLocationProvider
 import com.timecat.module.map.view.zoom.VerticalSeekBar
 import com.timecat.page.base.base.simple.BaseSimpleSupportFragment
 import com.xiaojinzi.component.anno.FragmentAnno
@@ -34,6 +33,8 @@ import org.osmdroid.views.overlay.gestures.RotationGestureOverlay
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.IMyLocationConsumer
 import org.osmdroid.views.overlay.mylocation.IMyLocationProvider
+import org.osmdroid.views.overlay.simplefastpoint.SimpleFastPointOverlay
+import org.osmdroid.views.overlay.simplefastpoint.SimplePointTheme
 import kotlin.math.roundToInt
 
 
@@ -59,6 +60,7 @@ class MapFragment : BaseSimpleSupportFragment() {
         map_icon = view.findViewById(R.id.map_icon)
         map_name = view.findViewById(R.id.map_name)
         close = view.findViewById(R.id.close)
+        panel = view.findViewById(R.id.panel)
     }
 
     lateinit var mMapView: MapView
@@ -70,6 +72,7 @@ class MapFragment : BaseSimpleSupportFragment() {
     private lateinit var map_icon: ImageView
     private lateinit var map_name: HintTextView
     private lateinit var close: ImageView
+    private lateinit var panel: PanelView
     val l = SeekBarListener(
         seek_zoom, 500,
     ) { progress ->
@@ -87,6 +90,9 @@ class MapFragment : BaseSimpleSupportFragment() {
 //
 //            }
 //        }
+        panel.show {
+            headerView.title = "地图"
+        }
     }
 
     fun closeMap() {
@@ -178,6 +184,11 @@ class MapFragment : BaseSimpleSupportFragment() {
                 TileSystemWebMercator.MinLongitude
             )
         )
+        val initPoint = MapView.getTileSystem().TileXYToPixelXY(10, 10, null)
+        val initGeoPoint = GeoPoint(0.0, 0.0)
+        MapView.getTileSystem().PixelXYToLatLong(initPoint.x, initPoint.y, 9.0, initGeoPoint)
+        mMapView.controller.animateTo(initGeoPoint)
+        mMapView.controller.zoomTo(9.0)
     }
 
     override fun onResume() {
@@ -247,6 +258,18 @@ class MapFragment : BaseSimpleSupportFragment() {
 //        val tilesOverlay = TilesOverlay(provider, _mActivity)
 //        tilesOverlay.loadingBackgroundColor = Color.TRANSPARENT
 //        mMapView.overlays.add(tilesOverlay)
+        val data = listOf(
+            Seat(0.5, 0.5, SeatType.PORTAL)
+        )
+        val interactionPoints = SimplePointTheme(data)
+        val interactionItemsOverlay = SimpleFastPointOverlay(interactionPoints)
+        interactionItemsOverlay.setOnClickListener { points, point ->
+            panel.show {
+                val seat = data.getOrNull(point)
+                headerView.title = seat?.title() ?: ""
+            }
+        }
+        mMapView.overlays.add(interactionItemsOverlay)
 
         val mRotationGestureOverlay = RotationGestureOverlay(mMapView)
         mRotationGestureOverlay.setEnabled(false)
