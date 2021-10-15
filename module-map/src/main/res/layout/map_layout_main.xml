@@ -121,10 +121,9 @@
     <com.timecat.module.map.view.PanelView
         android:id="@+id/panel"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="250dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/zoom_slider"
         tools:visibility="visible" />
 
 
