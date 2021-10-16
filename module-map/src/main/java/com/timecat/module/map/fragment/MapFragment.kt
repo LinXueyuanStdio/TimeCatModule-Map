@@ -260,12 +260,12 @@ class MapFragment : BaseSimpleSupportFragment() {
     }
 
     fun loadMarkers() {
-        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel).toMarker(mMapView, gameMap.box))
-        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel).toMarker(mMapView, gameMap.box))
-        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel).toMarker(mMapView, gameMap.box))
-        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel).toMarker(mMapView, gameMap.box))
-        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel).toMarker(mMapView, gameMap.box))
-        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel).toMarker(mMapView, gameMap.box))
+        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel, gameMap.box))
+        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel, gameMap.box))
+        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel, gameMap.box))
+        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel, gameMap.box))
+        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel, gameMap.box))
+        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel, gameMap.box))
     }
 
     fun setTileSource(source: MapTileSource) {

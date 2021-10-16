@@ -8,7 +8,6 @@ import org.osmdroid.api.IGeoPoint
 import org.osmdroid.util.BoundingBox
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.ClickableIconOverlay
-import org.osmdroid.views.overlay.Marker
 import kotlin.random.Random
 
 /**
@@ -29,15 +28,13 @@ data class GameMarkerData(
 data class GameMarker(
     val data: GameMarkerData,
     val panelView: PanelView,
+    val box: BoundingBox,
 ) : ClickableIconOverlay<GameMarkerData>(data) {
-    fun toMarker(mapView: MapView, box:BoundingBox): Marker {
-        val m = Marker(mapView)
-        m.title = data.title
-        IconLoader.loadIcon(mapView.context, {
-            m.icon = it
+
+    init {
+        IconLoader.loadIcon(panelView.context, {
+            set(GameMap(box).pos(data.x, data.y), it)
         }, data.icon)
-        m.position = GameMap(box).pos(data.x, data.y)
-        return m
     }
 
     override fun onMarkerClicked(mapView: MapView, markerId: Int, makerPosition: IGeoPoint, markerData: GameMarkerData): Boolean {
