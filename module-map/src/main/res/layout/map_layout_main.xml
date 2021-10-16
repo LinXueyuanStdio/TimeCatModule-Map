@@ -112,9 +112,11 @@
         android:layout_height="48dp"
         android:layout_marginBottom="@dimen/spacing_small"
         app:hint="探索度 20%"
+        app:hintTextColor="@color/master_textColorSecondary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/map_icon"
-        app:msg="大地图" />
+        app:msg="大地图"
+        app:msgTextColor="@color/master_textColorPrimary" />
     <!--右下-->
 
 

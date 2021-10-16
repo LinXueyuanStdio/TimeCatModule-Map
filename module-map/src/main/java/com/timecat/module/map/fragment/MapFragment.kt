@@ -189,7 +189,7 @@ class MapFragment : BaseSimpleSupportFragment() {
                 TileSystemWebMercator.MinLongitude
             )
         )
-        val initPoint = MapView.getTileSystem().TileXYToPixelXY(30, 30, null)
+        val initPoint = MapView.getTileSystem().TileXYToPixelXY(15, 15, null)
         val initGeoPoint = GeoPoint(0.0, 0.0)
         MapView.getTileSystem().PixelXYToLatLong(initPoint.x, initPoint.y, 9.0, initGeoPoint)
         mMapView.controller.animateTo(initGeoPoint)
