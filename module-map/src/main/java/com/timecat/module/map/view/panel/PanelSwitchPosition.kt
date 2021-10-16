@@ -1,6 +1,10 @@
 package com.timecat.module.map.view.panel
 
 import android.content.Context
+import com.timecat.layout.ui.business.form.Body
+import com.timecat.layout.ui.business.form.VerticalContainer
+import com.timecat.layout.ui.layout.*
+import com.timecat.module.map.view.Header
 import com.timecat.module.map.view.PanelView
 import kotlin.random.Random
 
@@ -11,14 +15,31 @@ import kotlin.random.Random
  * @description null
  * @usage null
  */
-fun PanelView.PanelSwitchPosition(context: Context, goTo: (x: Double, y: Double) -> Unit) {
+fun PanelView.PanelSwitchPosition(context: Context, data: PanelPosition, goTo: (x: Double, y: Double) -> Unit) {
     show {
-        headerView.title = "传送"
+        Header(data.title)
         container.apply {
+            NestedScrollView {
+                layout_width = match_parent
+                layout_height = 0
+                top_toTopOf = parent_id
+                bottom_toTopOf = bottomChipId
+
+                VerticalContainer {
+                    Body(data.content)
+                }
+            }
             BottomChip("传送") {
-                goTo(0.45 + Random.nextFloat() / 10, 0.45 + Random.nextFloat() / 10)
+                goTo(data.x, data.y)
                 hide()
             }
         }
     }
 }
+
+data class PanelPosition(
+    var title: String,
+    var content: String,
+    var x: Double = 0.45 + Random.nextFloat() / 10,
+    var y: Double = 0.45 + Random.nextFloat() / 10,
+)

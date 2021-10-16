@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -75,6 +74,15 @@ class PanelView @JvmOverloads constructor(
             setVisibility(View.GONE)
         }
     }
+}
+
+fun PanelView.Header(title: String) {
+    Header(IconLoader.randomAvatar(title), title)
+}
+
+fun PanelView.Header(icon: String = IconLoader.randomAvatar(), title: String) {
+    headerView.icon = icon
+    headerView.title = title
 }
 
 class PanelHeaderView @JvmOverloads constructor(

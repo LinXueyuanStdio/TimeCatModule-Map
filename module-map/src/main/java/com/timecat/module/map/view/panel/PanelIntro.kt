@@ -4,6 +4,7 @@ import android.content.Context
 import com.timecat.layout.ui.business.form.Body
 import com.timecat.layout.ui.business.form.VerticalContainer
 import com.timecat.layout.ui.layout.*
+import com.timecat.module.map.view.Header
 import com.timecat.module.map.view.PanelView
 
 /**
@@ -15,7 +16,7 @@ import com.timecat.module.map.view.PanelView
  */
 fun PanelView.PanelIntro(context: Context, intro: PanelIntro) {
     show {
-        headerView.title = intro.title
+        Header(intro.icon, intro.title)
         container.apply {
             NestedScrollView {
                 layout_width = match_parent
@@ -35,6 +36,7 @@ fun PanelView.PanelIntro(context: Context, intro: PanelIntro) {
 }
 
 data class PanelIntro(
+    var icon: String,
     var title: String,
     var content: String,
 )
