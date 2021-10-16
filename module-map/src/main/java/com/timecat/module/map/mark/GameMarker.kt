@@ -5,6 +5,7 @@ import com.timecat.module.map.view.PanelView
 import com.timecat.module.map.view.panel.GameMap
 import com.timecat.module.map.view.panel.PanelIntro
 import org.osmdroid.api.IGeoPoint
+import org.osmdroid.util.BoundingBox
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.ClickableIconOverlay
 import org.osmdroid.views.overlay.Marker
@@ -29,13 +30,13 @@ data class GameMarker(
     val data: GameMarkerData,
     val panelView: PanelView,
 ) : ClickableIconOverlay<GameMarkerData>(data) {
-    fun toMarker(mapView: MapView): Marker {
+    fun toMarker(mapView: MapView, box:BoundingBox): Marker {
         val m = Marker(mapView)
         m.title = data.title
         IconLoader.loadIcon(mapView.context, {
             m.icon = it
         }, data.icon)
-        m.position = GameMap(mapView.boundingBox).pos(data.x, data.y)
+        m.position = GameMap(box).pos(data.x, data.y)
         return m
     }
 

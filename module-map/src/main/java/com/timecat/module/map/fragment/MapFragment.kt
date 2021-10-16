@@ -162,7 +162,6 @@ class MapFragment : BaseSimpleSupportFragment() {
             false
         })
         addOverlays()
-        loadMarkers()
         mMapView.setMultiTouchControls(true)
         mMapView.isTilesScaledToDpi = true
         mMapView.setUseDataConnection(true)
@@ -261,12 +260,12 @@ class MapFragment : BaseSimpleSupportFragment() {
     }
 
     fun loadMarkers() {
-        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel))
-        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel))
-        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel))
-        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel))
-        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel))
-        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel))
+        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel).toMarker(mMapView, gameMap.box))
+        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel).toMarker(mMapView, gameMap.box))
+        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel).toMarker(mMapView, gameMap.box))
+        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel).toMarker(mMapView, gameMap.box))
+        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel).toMarker(mMapView, gameMap.box))
+        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel).toMarker(mMapView, gameMap.box))
     }
 
     fun setTileSource(source: MapTileSource) {
@@ -288,5 +287,7 @@ class MapFragment : BaseSimpleSupportFragment() {
 
         mMapView.controller.animateTo(gameMap.pos(source.initX, source.initY))
         mMapView.controller.zoomTo(source.initZoomLevel, 500)
+
+        loadMarkers()
     }
 }
