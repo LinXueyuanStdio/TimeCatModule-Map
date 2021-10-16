@@ -1,5 +1,6 @@
 package com.timecat.module.map.view.panel
 
+import android.view.View.TEXT_ALIGNMENT_CENTER
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.android.material.chip.Chip
 import com.timecat.component.identity.Attr
@@ -26,6 +27,7 @@ fun ConstraintLayout.bottomChip(name: String, onClick: () -> Unit) {
         bottom_toBottomOf = parent_id
 
         text = name
+        textAlignment = TEXT_ALIGNMENT_CENTER
         gravity = gravity_center
         setChipIconResource(R.drawable.ic_ok_circle_white_24dp)
         setChipIconTintResource(R.color.master_icon_view)

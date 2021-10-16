@@ -7,6 +7,7 @@ import org.osmdroid.tileprovider.MapTileProviderBasic
 import org.osmdroid.tileprovider.tilesource.ITileSource
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.BoundingBox
+import java.util.*
 
 /**
  * @author 林学渊
@@ -40,6 +41,7 @@ class TileSourceManager {
 class MapTileSource(
     var box: BoundingBox,
     var tileSource: ITileSource,
+    var uuid:String = UUID.randomUUID().toString(),
     var initZoomLevel: Int = 9,
     var initX: Double = 0.5,
     var initY: Double = 0.5,
