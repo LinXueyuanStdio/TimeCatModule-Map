@@ -103,7 +103,7 @@ class MapFragment : BaseSimpleSupportFragment() {
             headerView.title = "地图"
             container.apply {
                 bottomChip("传送") {
-                    goTo(0.25 + Random.nextFloat() / 2, 0.25 + Random.nextFloat() / 2)
+                    goTo(0.45 + Random.nextFloat() / 10, 0.45 + Random.nextFloat() / 10)
                     panel.hide()
                 }
             }

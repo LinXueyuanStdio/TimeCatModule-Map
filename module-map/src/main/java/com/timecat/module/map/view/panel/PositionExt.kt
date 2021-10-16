@@ -14,7 +14,7 @@ import kotlin.math.roundToInt
  */
 fun pos(x: Double, y: Double): GeoPoint {
     val initGeoPoint = GeoPoint(0.0, 0.0)
-    val mapSize = TileSystem.MapSize(11.0)
+    val mapSize = TileSystem.MapSize(9.0)
     val px = (x * mapSize).roundToInt()
     val py = (y * mapSize).roundToInt()
     MapView.getTileSystem().PixelXYToLatLong(px, py, 9.0, initGeoPoint)
