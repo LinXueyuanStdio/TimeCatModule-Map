@@ -9,13 +9,17 @@ import android.view.View
 import android.view.View.OnGenericMotionListener
 import android.widget.*
 import com.google.android.material.chip.Chip
-import com.timecat.layout.ui.layout.setShakelessClickListener
+import com.timecat.layout.ui.layout.*
 import com.timecat.layout.ui.standard.textview.HintTextView
 import com.timecat.module.map.BuildConfig
 import com.timecat.module.map.R
 import com.timecat.module.map.view.*
 import com.timecat.module.map.view.panel.Seat
 import com.timecat.module.map.view.panel.SeatType
+import com.timecat.module.map.view.panel.bottomChip
+import com.timecat.module.map.view.panel.pos
+import com.timecat.module.map.view.source.TileSourceManager
+import com.timecat.module.map.view.source.toProvider
 import com.timecat.module.map.view.zoom.SeekBarListener
 import com.timecat.module.map.view.zoom.VerticalSeekBar
 import com.timecat.page.base.base.simple.BaseSimpleSupportFragment
@@ -24,7 +28,6 @@ import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapListener
 import org.osmdroid.events.ScrollEvent
 import org.osmdroid.events.ZoomEvent
-import org.osmdroid.tileprovider.MapTileProviderBasic
 import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.util.TileSystemWebMercator
@@ -38,6 +41,7 @@ import org.osmdroid.views.overlay.mylocation.IMyLocationProvider
 import org.osmdroid.views.overlay.simplefastpoint.SimpleFastPointOverlay
 import org.osmdroid.views.overlay.simplefastpoint.SimplePointTheme
 import kotlin.math.roundToInt
+import kotlin.random.Random
 
 
 /**
@@ -97,6 +101,12 @@ class MapFragment : BaseSimpleSupportFragment() {
 //        }
         panel.show {
             headerView.title = "地图"
+            container.apply {
+                bottomChip("传送") {
+                    goTo(0.25 + Random.nextFloat() / 2, 0.25 + Random.nextFloat() / 2)
+                    panel.hide()
+                }
+            }
         }
     }
 
@@ -196,6 +206,10 @@ class MapFragment : BaseSimpleSupportFragment() {
         mMapView.controller.zoomTo(9.0)
     }
 
+    fun goTo(x: Double, y: Double) {
+        mMapView.controller.animateTo(pos(x, y))
+    }
+
     override fun onResume() {
         super.onResume()
 //        Configuration.getInstance().load(_mActivity.applicationContext, DEF.block())
@@ -212,15 +226,10 @@ class MapFragment : BaseSimpleSupportFragment() {
 
     var mGpsMyLocationProvider: GpsMyLocationProvider? = null
     var mMyLocationOverlay: ItemizedOverlayWithFocus<OverlayItem>? = null
+    val tileSourceManager: TileSourceManager = TileSourceManager()
     protected fun addOverlays() {
-        val provider = MapTileProviderBasic(_mActivity)
-        val tileSource = GameTileSource(
-            "GenshinImpact", 6, 11, 256, ".jpg",
-            arrayOf("https://gim.appsample.net/teyvat/v21/"),
-            "© Genshin Impact contributors"
-        )
-        provider.tileSource = tileSource
-        mMapView.tileProvider = provider
+        val tileSource = tileSourceManager.getInitSource()
+        mMapView.tileProvider = tileSource.toProvider(_mActivity)
         val userLocationProvider = UserLocationProvider()
         userLocationProvider.startLocationProvider(object : IMyLocationConsumer {
             override fun onLocationChanged(location: Location, source: IMyLocationProvider) {
