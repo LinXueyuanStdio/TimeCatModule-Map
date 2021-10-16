@@ -1,4 +1,4 @@
-package com.timecat.module.map.view
+package com.timecat.module.map.view.source
 
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase
 import org.osmdroid.tileprovider.tilesource.TileSourcePolicy

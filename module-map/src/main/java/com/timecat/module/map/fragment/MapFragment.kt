@@ -1,6 +1,5 @@
 package com.timecat.module.map.fragment
 
-import android.graphics.Point
 import android.location.Location
 import android.os.Build
 import android.view.InputDevice
@@ -14,10 +13,8 @@ import com.timecat.layout.ui.standard.textview.HintTextView
 import com.timecat.module.map.BuildConfig
 import com.timecat.module.map.R
 import com.timecat.module.map.view.*
-import com.timecat.module.map.view.panel.Seat
-import com.timecat.module.map.view.panel.SeatType
-import com.timecat.module.map.view.panel.bottomChip
-import com.timecat.module.map.view.panel.pos
+import com.timecat.module.map.view.panel.*
+import com.timecat.module.map.view.source.MapTileSource
 import com.timecat.module.map.view.source.TileSourceManager
 import com.timecat.module.map.view.source.toProvider
 import com.timecat.module.map.view.zoom.SeekBarListener
@@ -28,9 +25,7 @@ import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapListener
 import org.osmdroid.events.ScrollEvent
 import org.osmdroid.events.ZoomEvent
-import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
-import org.osmdroid.util.TileSystemWebMercator
 import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.*
@@ -41,7 +36,6 @@ import org.osmdroid.views.overlay.mylocation.IMyLocationProvider
 import org.osmdroid.views.overlay.simplefastpoint.SimpleFastPointOverlay
 import org.osmdroid.views.overlay.simplefastpoint.SimplePointTheme
 import kotlin.math.roundToInt
-import kotlin.random.Random
 
 
 /**
@@ -99,14 +93,8 @@ class MapFragment : BaseSimpleSupportFragment() {
 //
 //            }
 //        }
-        panel.show {
-            headerView.title = "地图"
-            container.apply {
-                bottomChip("传送") {
-                    goTo(0.45 + Random.nextFloat() / 10, 0.45 + Random.nextFloat() / 10)
-                    panel.hide()
-                }
-            }
+        panel.PanelSwitchMap(_mActivity, tileSourceManager) {
+            setTileSource(it)
         }
     }
 
@@ -115,10 +103,6 @@ class MapFragment : BaseSimpleSupportFragment() {
     }
 
     override fun lazyInit() {
-        seek_zoom.max = 11
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            seek_zoom.min = 6
-        }
         seek_zoom.setOnSeekBarChangeListener(l)
         zoom_add.setOnClickListener {
             seek_zoom.progress += 1
@@ -154,7 +138,7 @@ class MapFragment : BaseSimpleSupportFragment() {
         Configuration.getInstance().isDebugMode = true
         Configuration.getInstance().setUserAgentValue(BuildConfig.LIBRARY_PACKAGE_NAME)
 
-//        val prov = MapTileAssetsProvider(S impleRegisterReceiver(context), _mActivity.assets)
+//        val prov = MapTileAssetsProvider(SimpleRegisterReceiver(context), _mActivity.assets)
 //        mMapView.tileProvider = MapTileProviderArray(TileSourceFactory.MAPNIK, SimpleRegisterReceiver(context), arrayOf<MapTileModuleProviderBase>(prov))
         mMapView.setOnGenericMotionListener(OnGenericMotionListener { v, event ->
             /**
@@ -184,21 +168,8 @@ class MapFragment : BaseSimpleSupportFragment() {
         mMapView.setUseDataConnection(true)
         mMapView.isHorizontalMapRepetitionEnabled = false
         mMapView.isVerticalMapRepetitionEnabled = false
-        mMapView.minZoomLevel = 6.0
-        mMapView.maxZoomLevel = 11.0
         mMapView.setZoomRounding(true)
-        val p = Point()
-        MapView.getTileSystem().TileXYToPixelXY(4, 4, p)
-        val geoPoint = GeoPoint(0.0, 0.0)
-        MapView.getTileSystem().PixelXYToLatLong(p.x, p.y, 6.0, geoPoint)
-        mMapView.setScrollableAreaLimitDouble(
-            BoundingBox(
-                TileSystemWebMercator.MaxLatitude,
-                geoPoint.longitude,
-                geoPoint.latitude,
-                TileSystemWebMercator.MinLongitude
-            )
-        )
+
         val initPoint = MapView.getTileSystem().TileXYToPixelXY(15, 15, null)
         val initGeoPoint = GeoPoint(0.0, 0.0)
         MapView.getTileSystem().PixelXYToLatLong(initPoint.x, initPoint.y, 9.0, initGeoPoint)
@@ -206,8 +177,10 @@ class MapFragment : BaseSimpleSupportFragment() {
         mMapView.controller.zoomTo(9.0)
     }
 
+    lateinit var gameMap: GameMap
+
     fun goTo(x: Double, y: Double) {
-        mMapView.controller.animateTo(pos(x, y))
+        mMapView.controller.animateTo(gameMap.pos(x, y))
     }
 
     override fun onResume() {
@@ -227,9 +200,39 @@ class MapFragment : BaseSimpleSupportFragment() {
     var mGpsMyLocationProvider: GpsMyLocationProvider? = null
     var mMyLocationOverlay: ItemizedOverlayWithFocus<OverlayItem>? = null
     val tileSourceManager: TileSourceManager = TileSourceManager()
-    protected fun addOverlays() {
-        val tileSource = tileSourceManager.getInitSource()
+
+    fun setTileSource(source: MapTileSource) {
+        val tileSource = source.tileSource
         mMapView.tileProvider = tileSource.toProvider(_mActivity)
+
+        miniMapOverlay.setTileSource(tileSource)
+
+        seek_zoom.max = tileSource.maximumZoomLevel
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            seek_zoom.min = tileSource.minimumZoomLevel
+        }
+        mMapView.minZoomLevel = tileSource.minimumZoomLevel.toDouble()
+        mMapView.maxZoomLevel = tileSource.maximumZoomLevel.toDouble()
+
+        val box = source.box
+        gameMap = GameMap(box)
+        mMapView.setScrollableAreaLimitDouble(box)
+
+        mMapView.controller.animateTo(gameMap.pos(source.initX, source.initY))
+        mMapView.controller.zoomTo(source.initZoomLevel, 500)
+    }
+
+    val miniMapOverlay by lazy { MinimapOverlay(context, mMapView.getTileRequestCompleteHandler()) }
+
+    val mRotationGestureOverlay by lazy {
+        val overlay = RotationGestureOverlay(mMapView)
+        overlay.setEnabled(false)
+        overlay
+    }
+
+    protected fun addOverlays() {
+        setTileSource(tileSourceManager.getInitSource())
+
         val userLocationProvider = UserLocationProvider()
         userLocationProvider.startLocationProvider(object : IMyLocationConsumer {
             override fun onLocationChanged(location: Location, source: IMyLocationProvider) {
@@ -285,17 +288,12 @@ class MapFragment : BaseSimpleSupportFragment() {
         }
         mMapView.overlays.add(interactionItemsOverlay)
 
-        val mRotationGestureOverlay = RotationGestureOverlay(mMapView)
-        mRotationGestureOverlay.setEnabled(false)
         mMapView.overlays.add(mRotationGestureOverlay)
-
-        val miniMapOverlay = MinimapOverlay(context, mMapView.getTileRequestCompleteHandler())
-        miniMapOverlay.setTileSource(tileSource)
         mMapView.overlays.add(miniMapOverlay)
 
         val copyrightOverlay = CopyrightOverlay(activity)
         copyrightOverlay.setTextSize(10)
-        mMapView.overlays?.add(copyrightOverlay)
+        mMapView.overlays.add(copyrightOverlay)
     }
 
 }
