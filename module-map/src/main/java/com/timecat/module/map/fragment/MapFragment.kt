@@ -10,8 +10,11 @@ import android.widget.*
 import com.google.android.material.chip.Chip
 import com.timecat.layout.ui.layout.*
 import com.timecat.layout.ui.standard.textview.HintTextView
+import com.timecat.layout.ui.utils.IconLoader
 import com.timecat.module.map.BuildConfig
 import com.timecat.module.map.R
+import com.timecat.module.map.mark.GameMarker
+import com.timecat.module.map.mark.GameMarkerData
 import com.timecat.module.map.view.*
 import com.timecat.module.map.view.panel.*
 import com.timecat.module.map.view.source.MapTileSource
@@ -159,6 +162,7 @@ class MapFragment : BaseSimpleSupportFragment() {
             false
         })
         addOverlays()
+        loadMarkers()
         mMapView.setMultiTouchControls(true)
         mMapView.isTilesScaledToDpi = true
         mMapView.setUseDataConnection(true)
@@ -247,18 +251,6 @@ class MapFragment : BaseSimpleSupportFragment() {
 //        val tilesOverlay = TilesOverlay(provider, _mActivity)
 //        tilesOverlay.loadingBackgroundColor = Color.TRANSPARENT
 //        mMapView.overlays.add(tilesOverlay)
-        val data = listOf(
-            Seat(0.5, 0.5, SeatType.PORTAL)
-        )
-        val interactionPoints = SimplePointTheme(data)
-        val interactionItemsOverlay = SimpleFastPointOverlay(interactionPoints)
-        interactionItemsOverlay.setOnClickListener { points, point ->
-            panel.show {
-                val seat = data.getOrNull(point)
-                headerView.title = seat?.title() ?: ""
-            }
-        }
-        mMapView.overlays.add(interactionItemsOverlay)
 
         mMapView.overlays.add(mRotationGestureOverlay)
         mMapView.overlays.add(miniMapOverlay)
@@ -266,6 +258,15 @@ class MapFragment : BaseSimpleSupportFragment() {
         val copyrightOverlay = CopyrightOverlay(activity)
         copyrightOverlay.setTextSize(10)
         mMapView.overlays.add(copyrightOverlay)
+    }
+
+    fun loadMarkers() {
+        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel))
+        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel))
+        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel))
+        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel))
+        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel))
+        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel))
     }
 
     fun setTileSource(source: MapTileSource) {

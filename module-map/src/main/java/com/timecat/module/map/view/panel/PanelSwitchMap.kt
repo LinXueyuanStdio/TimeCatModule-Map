@@ -3,7 +3,10 @@ package com.timecat.module.map.view.panel
 import android.content.Context
 import androidx.recyclerview.widget.GridLayoutManager
 import com.timecat.layout.ui.entity.BaseAdapter
-import com.timecat.layout.ui.layout.*
+import com.timecat.layout.ui.layout.RecyclerView
+import com.timecat.layout.ui.layout.layout_height
+import com.timecat.layout.ui.layout.layout_width
+import com.timecat.layout.ui.layout.match_parent
 import com.timecat.layout.ui.utils.IconLoader
 import com.timecat.middle.block.adapter.SubItem
 import com.timecat.middle.block.adapter.SubTypeCard
@@ -44,7 +47,7 @@ fun PanelView.PanelSwitchMap(context: Context, tileSourceManager: TileSourceMana
                     val item = SubItem(
                         0, 0,
                         it.tileSource.name(),
-                        it.tileSource.copyrightNotice,
+                        it.tileSource.copyrightNotice ?: it.tileSource.name(),
                         IconLoader.randomAvatar(it.uuid),
                         "", "", it.uuid
                     )

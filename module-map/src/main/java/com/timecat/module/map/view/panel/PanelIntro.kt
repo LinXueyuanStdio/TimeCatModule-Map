@@ -4,6 +4,7 @@ import android.content.Context
 import com.timecat.layout.ui.business.form.Body
 import com.timecat.layout.ui.business.form.VerticalContainer
 import com.timecat.layout.ui.layout.*
+import com.timecat.module.map.mark.GameMarkerData
 import com.timecat.module.map.view.Header
 import com.timecat.module.map.view.PanelView
 
@@ -14,7 +15,7 @@ import com.timecat.module.map.view.PanelView
  * @description 介绍型标记
  * @usage null
  */
-fun PanelView.PanelIntro(context: Context, intro: PanelIntro) {
+fun PanelView.PanelIntro(context: Context, intro: GameMarkerData) {
     show {
         Header(intro.icon, intro.title)
         container.apply {
@@ -34,9 +35,3 @@ fun PanelView.PanelIntro(context: Context, intro: PanelIntro) {
         }
     }
 }
-
-data class PanelIntro(
-    var icon: String,
-    var title: String,
-    var content: String,
-)
