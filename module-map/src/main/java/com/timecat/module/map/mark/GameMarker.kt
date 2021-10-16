@@ -29,6 +29,7 @@ data class GameMarker(
     val data: GameMarkerData,
     val panelView: PanelView,
     val box: BoundingBox,
+    val listener :MarkerListener
 ) : ClickableIconOverlay<GameMarkerData>(data) {
 
     init {
@@ -38,7 +39,10 @@ data class GameMarker(
     }
 
     override fun onMarkerClicked(mapView: MapView, markerId: Int, makerPosition: IGeoPoint, markerData: GameMarkerData): Boolean {
-        panelView.PanelIntro(mapView.context, markerData)
-        return true
+        return listener.onMarkerClicked(mapView, markerId, makerPosition, this)
     }
+}
+
+interface MarkerListener {
+    fun onMarkerClicked(mapView: MapView, markerId: Int, makerPosition: IGeoPoint, markerData: GameMarker): Boolean
 }

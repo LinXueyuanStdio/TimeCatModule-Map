@@ -15,6 +15,7 @@ import com.timecat.module.map.BuildConfig
 import com.timecat.module.map.R
 import com.timecat.module.map.mark.GameMarker
 import com.timecat.module.map.mark.GameMarkerData
+import com.timecat.module.map.mark.MarkerListener
 import com.timecat.module.map.view.*
 import com.timecat.module.map.view.panel.*
 import com.timecat.module.map.view.source.MapTileSource
@@ -24,6 +25,7 @@ import com.timecat.module.map.view.zoom.SeekBarListener
 import com.timecat.module.map.view.zoom.VerticalSeekBar
 import com.timecat.page.base.base.simple.BaseSimpleSupportFragment
 import com.xiaojinzi.component.anno.FragmentAnno
+import org.osmdroid.api.IGeoPoint
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapListener
 import org.osmdroid.events.ScrollEvent
@@ -36,8 +38,6 @@ import org.osmdroid.views.overlay.gestures.RotationGestureOverlay
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.IMyLocationConsumer
 import org.osmdroid.views.overlay.mylocation.IMyLocationProvider
-import org.osmdroid.views.overlay.simplefastpoint.SimpleFastPointOverlay
-import org.osmdroid.views.overlay.simplefastpoint.SimplePointTheme
 import kotlin.math.roundToInt
 
 
@@ -260,12 +260,19 @@ class MapFragment : BaseSimpleSupportFragment() {
     }
 
     fun loadMarkers() {
-        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel, gameMap.box))
-        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel, gameMap.box))
-        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel, gameMap.box))
-        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel, gameMap.box))
-        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel, gameMap.box))
-        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel, gameMap.box))
+        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel, gameMap.box, listener))
+        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel, gameMap.box, listener))
+        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel, gameMap.box, listener))
+        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel, gameMap.box, listener))
+        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel, gameMap.box, listener))
+        mMapView.overlays.add(GameMarker(GameMarkerData(IconLoader.randomAvatar(), "里约", "hhh"), panel, gameMap.box, listener))
+    }
+
+    val listener: MarkerListener = object : MarkerListener {
+        override fun onMarkerClicked(mapView: MapView, markerId: Int, makerPosition: IGeoPoint, markerData: GameMarker): Boolean {
+            panel.PanelIntro(mapView.context, markerData.data)
+            return true
+        }
     }
 
     fun setTileSource(source: MapTileSource) {
