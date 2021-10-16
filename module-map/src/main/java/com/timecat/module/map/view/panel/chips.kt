@@ -14,8 +14,10 @@ import com.timecat.module.map.R
  * @description null
  * @usage null
  */
-fun ConstraintLayout.bottomChip(name: String, onClick: () -> Unit) {
+const val bottomChipId = "bottomChip"
+fun ConstraintLayout.BottomChip(name: String, onClick: () -> Unit) {
     Chip(context).apply {
+        layout_id = bottomChipId
         layout_width = 0
         layout_height = 48
         margin_start = 8

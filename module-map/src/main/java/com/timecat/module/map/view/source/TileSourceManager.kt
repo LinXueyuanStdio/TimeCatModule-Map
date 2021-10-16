@@ -20,6 +20,12 @@ class TileSourceManager {
     fun getAllSources(): List<MapTileSource> {
         return listOf(
             getGameSource(),
+            getGameSource(),
+            getGameSource(),
+            getGameSource(),
+            getGameSource(),
+            getGameSource(),
+            getGameSource(),
             MapTileSource(worldBoundBox(), TileSourceFactory.MAPNIK),
         )
     }
@@ -41,7 +47,7 @@ class TileSourceManager {
 class MapTileSource(
     var box: BoundingBox,
     var tileSource: ITileSource,
-    var uuid:String = UUID.randomUUID().toString(),
+    var uuid: String = UUID.randomUUID().toString(),
     var initZoomLevel: Int = 9,
     var initX: Double = 0.5,
     var initY: Double = 0.5,

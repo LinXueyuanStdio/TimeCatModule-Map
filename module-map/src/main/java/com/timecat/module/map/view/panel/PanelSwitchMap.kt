@@ -27,7 +27,6 @@ fun PanelView.PanelSwitchMap(context: Context, tileSourceManager: TileSourceMana
             RecyclerView {
                 layout_width = match_parent
                 layout_height = match_parent
-                top_toTopOf = parent_id
 
                 val callback = object : SubTypeCard.Listener {
                     override fun loadFor(subItem: SubItem) {
@@ -45,7 +44,7 @@ fun PanelView.PanelSwitchMap(context: Context, tileSourceManager: TileSourceMana
                         0, 0,
                         it.tileSource.name(),
                         it.tileSource.copyrightNotice,
-                        IconLoader.randomAvatar(),
+                        IconLoader.randomAvatar(it.uuid),
                         "", "", it.uuid
                     )
                     SubTypeCard(item, context, callback)
@@ -55,9 +54,6 @@ fun PanelView.PanelSwitchMap(context: Context, tileSourceManager: TileSourceMana
                 bindAdapter(mAdapter, this) {
                     GridLayoutManager(context, 2)
                 }
-            }
-            bottomChip("传送") {
-                hide()
             }
         }
     }
