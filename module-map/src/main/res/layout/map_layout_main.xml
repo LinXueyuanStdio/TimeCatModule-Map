@@ -21,9 +21,10 @@
         android:id="@+id/close"
         android:layout_width="48dp"
         android:layout_height="48dp"
+        android:layout_margin="@dimen/spacing_tiny"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/close"
-        android:padding="@dimen/spacing_tiny"
+        android:padding="@dimen/spacing_normal"
         android:src="@drawable/ic_close"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

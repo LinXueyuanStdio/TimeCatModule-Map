@@ -103,6 +103,9 @@ class PanelHeaderView @JvmOverloads constructor(
             layout_width = 0
             layout_height = match_parent
             weight = 1.0f
+
+            gravity = Gravity.CENTER_VERTICAL
+            setTextColor(Attr.getPrimaryTextColor(context))
             setOnClickListener {
                 onTitleClick()
             }

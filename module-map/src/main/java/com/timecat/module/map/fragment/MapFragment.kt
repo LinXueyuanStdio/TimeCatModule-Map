@@ -64,8 +64,12 @@ class MapFragment : BaseSimpleSupportFragment() {
         close = view.findViewById(R.id.close)
         panel = view.findViewById(R.id.panel)
         l = SeekBarListener(seek_zoom, 50) { progress ->
-            mMapView.controller.zoomTo(progress.toDouble(), 6)
+            zoomTo(progress)
         }
+    }
+
+    fun zoomTo(zoomLevel: Int) {
+        mMapView.controller.zoomTo(zoomLevel, 500)
     }
 
     lateinit var mMapView: MapView
@@ -108,9 +112,11 @@ class MapFragment : BaseSimpleSupportFragment() {
         seek_zoom.setOnSeekBarChangeListener(l)
         zoom_add.setOnClickListener {
             seek_zoom.progress += 1
+            zoomTo(seek_zoom.progress)
         }
         zoom_sub.setOnClickListener {
             seek_zoom.progress -= 1
+            zoomTo(seek_zoom.progress)
         }
         map_icon.setShakelessClickListener {
             switchMap()
@@ -127,9 +133,7 @@ class MapFragment : BaseSimpleSupportFragment() {
             }
 
             override fun onZoom(event: ZoomEvent): Boolean {
-                seek_zoom.setOnSeekBarChangeListener(null)
                 seek_zoom.progress = event.zoomLevel.roundToInt()
-                seek_zoom.setOnSeekBarChangeListener(l)
                 return true
             }
         })
