@@ -20,14 +20,9 @@ class TileSourceManager {
     fun getAllSources(): List<MapTileSource> {
         return listOf(
             getGameSource(),
-            getGameSource(),
-            getGameSource(),
-            getGameSource(),
-            getGameSource(),
-            getGameSource(),
-            getGameSource(),
-            MapTileSource(worldBoundBox(), TileSourceFactory.MAPNIK),
-        )
+        ) + TileSourceFactory.getTileSources().map {
+            MapTileSource(worldBoundBox(), it)
+        }
     }
 
     fun getGameSource(): MapTileSource {

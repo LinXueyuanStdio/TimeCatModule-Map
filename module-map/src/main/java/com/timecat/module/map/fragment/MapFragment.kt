@@ -66,10 +66,6 @@ class MapFragment : BaseSimpleSupportFragment() {
         }
     }
 
-    fun zoomTo(zoomLevel: Int) {
-        mMapView.controller.zoomTo(zoomLevel, 500)
-    }
-
     lateinit var mMapView: MapView
     private lateinit var water: Chip
     private lateinit var zoom_slider: LinearLayout
@@ -169,15 +165,13 @@ class MapFragment : BaseSimpleSupportFragment() {
         mMapView.isHorizontalMapRepetitionEnabled = false
         mMapView.isVerticalMapRepetitionEnabled = false
         mMapView.setZoomRounding(true)
-
-        val initPoint = MapView.getTileSystem().TileXYToPixelXY(15, 15, null)
-        val initGeoPoint = GeoPoint(0.0, 0.0)
-        MapView.getTileSystem().PixelXYToLatLong(initPoint.x, initPoint.y, 9.0, initGeoPoint)
-        mMapView.controller.animateTo(initGeoPoint)
-        mMapView.controller.zoomTo(9.0)
     }
 
     lateinit var gameMap: GameMap
+
+    fun zoomTo(zoomLevel: Int) {
+        mMapView.controller.zoomTo(zoomLevel, 500)
+    }
 
     fun goTo(x: Double, y: Double) {
         mMapView.controller.animateTo(gameMap.pos(x, y))
@@ -201,29 +195,7 @@ class MapFragment : BaseSimpleSupportFragment() {
     var mMyLocationOverlay: ItemizedOverlayWithFocus<OverlayItem>? = null
     val tileSourceManager: TileSourceManager = TileSourceManager()
 
-    fun setTileSource(source: MapTileSource) {
-        val tileSource = source.tileSource
-        mMapView.tileProvider = tileSource.toProvider(_mActivity)
-
-        miniMapOverlay.setTileSource(tileSource)
-
-        seek_zoom.max = tileSource.maximumZoomLevel
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            seek_zoom.min = tileSource.minimumZoomLevel
-        }
-        mMapView.minZoomLevel = tileSource.minimumZoomLevel.toDouble()
-        mMapView.maxZoomLevel = tileSource.maximumZoomLevel.toDouble()
-
-        val box = source.box
-        gameMap = GameMap(box)
-        mMapView.setScrollableAreaLimitDouble(box)
-
-        mMapView.controller.animateTo(gameMap.pos(source.initX, source.initY))
-        mMapView.controller.zoomTo(source.initZoomLevel, 500)
-    }
-
     val miniMapOverlay by lazy { MinimapOverlay(context, mMapView.getTileRequestCompleteHandler()) }
-
     val mRotationGestureOverlay by lazy {
         val overlay = RotationGestureOverlay(mMapView)
         overlay.setEnabled(false)
@@ -296,4 +268,24 @@ class MapFragment : BaseSimpleSupportFragment() {
         mMapView.overlays.add(copyrightOverlay)
     }
 
+    fun setTileSource(source: MapTileSource) {
+        val tileSource = source.tileSource
+        mMapView.tileProvider = tileSource.toProvider(_mActivity)
+
+        miniMapOverlay.setTileSource(tileSource)
+
+        seek_zoom.max = tileSource.maximumZoomLevel
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            seek_zoom.min = tileSource.minimumZoomLevel
+        }
+        mMapView.minZoomLevel = tileSource.minimumZoomLevel.toDouble()
+        mMapView.maxZoomLevel = tileSource.maximumZoomLevel.toDouble()
+
+        val box = source.box
+        gameMap = GameMap(box)
+        mMapView.setScrollableAreaLimitDouble(box)
+
+        mMapView.controller.animateTo(gameMap.pos(source.initX, source.initY))
+        mMapView.controller.zoomTo(source.initZoomLevel, 500)
+    }
 }

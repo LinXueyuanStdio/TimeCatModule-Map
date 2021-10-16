@@ -15,6 +15,7 @@ import com.timecat.layout.ui.drawabe.selectableItemBackground
 import com.timecat.layout.ui.layout.*
 import com.timecat.layout.ui.utils.IconLoader
 import com.timecat.module.map.R
+import com.timecat.module.map.view.panel.Dismissable
 
 /**
  * @author 林学渊
@@ -27,7 +28,7 @@ class PanelView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : LinearLayout(context, attrs, defStyleAttr) {
+) : LinearLayout(context, attrs, defStyleAttr), Dismissable {
     //初始化动画
     val bottomBarInAnimation by lazy { AnimationUtils.loadAnimation(context, R.anim.seat_selection_bottom_bar_in) }
     val bottomBarOutAnimation by lazy { AnimationUtils.loadAnimation(context, R.anim.seat_selection_bottom_bar_out) }
@@ -74,6 +75,8 @@ class PanelView @JvmOverloads constructor(
             setVisibility(View.GONE)
         }
     }
+
+    override fun dismiss() = hide()
 }
 
 fun PanelView.Header(title: String) {
