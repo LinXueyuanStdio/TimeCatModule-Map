@@ -1,4 +1,4 @@
-package com.timecat.module.map.view
+package com.timecat.module.map.view.panel
 
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.util.TileSystem

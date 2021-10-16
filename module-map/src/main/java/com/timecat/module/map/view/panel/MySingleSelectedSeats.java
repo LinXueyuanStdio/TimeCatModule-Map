@@ -1,6 +1,8 @@
-package com.timecat.module.map.view;
+package com.timecat.module.map.view.panel;
 
 import android.content.Context;
+
+import com.timecat.module.map.view.PanelView;
 
 import org.osmdroid.views.MapView;
 

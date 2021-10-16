@@ -1,4 +1,4 @@
-package com.timecat.module.map.view
+package com.timecat.module.map.view.panel
 
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver

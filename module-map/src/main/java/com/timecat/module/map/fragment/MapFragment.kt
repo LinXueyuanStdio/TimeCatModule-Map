@@ -14,6 +14,8 @@ import com.timecat.layout.ui.standard.textview.HintTextView
 import com.timecat.module.map.BuildConfig
 import com.timecat.module.map.R
 import com.timecat.module.map.view.*
+import com.timecat.module.map.view.panel.Seat
+import com.timecat.module.map.view.panel.SeatType
 import com.timecat.module.map.view.zoom.SeekBarListener
 import com.timecat.module.map.view.zoom.VerticalSeekBar
 import com.timecat.page.base.base.simple.BaseSimpleSupportFragment
@@ -61,6 +63,9 @@ class MapFragment : BaseSimpleSupportFragment() {
         map_name = view.findViewById(R.id.map_name)
         close = view.findViewById(R.id.close)
         panel = view.findViewById(R.id.panel)
+        l = SeekBarListener(seek_zoom, 50) { progress ->
+            mMapView.controller.zoomTo(progress.toDouble(), 6)
+        }
     }
 
     lateinit var mMapView: MapView
@@ -73,11 +78,7 @@ class MapFragment : BaseSimpleSupportFragment() {
     private lateinit var map_name: HintTextView
     private lateinit var close: ImageView
     private lateinit var panel: PanelView
-    val l = SeekBarListener(
-        seek_zoom, 500,
-    ) { progress ->
-        mMapView.controller.zoomTo(progress.toDouble(), 6)
-    }
+    private lateinit var l: SeekBarListener
 
     fun switchMap(selected: Int = 0) {
         //TODO 初版不需要切换地图
@@ -184,7 +185,7 @@ class MapFragment : BaseSimpleSupportFragment() {
                 TileSystemWebMercator.MinLongitude
             )
         )
-        val initPoint = MapView.getTileSystem().TileXYToPixelXY(10, 10, null)
+        val initPoint = MapView.getTileSystem().TileXYToPixelXY(30, 30, null)
         val initGeoPoint = GeoPoint(0.0, 0.0)
         MapView.getTileSystem().PixelXYToLatLong(initPoint.x, initPoint.y, 9.0, initGeoPoint)
         mMapView.controller.animateTo(initGeoPoint)

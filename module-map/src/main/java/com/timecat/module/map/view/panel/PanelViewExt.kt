@@ -4,11 +4,15 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.timecat.component.commonsdk.extension.isVisible
+import com.timecat.component.identity.Attr
+import com.timecat.layout.ui.drawabe.selectableItemBackground
 import com.timecat.layout.ui.layout.*
 import com.timecat.layout.ui.utils.IconLoader
 import com.timecat.module.map.R
@@ -30,12 +34,12 @@ class PanelView @JvmOverloads constructor(
     val bottomBarOutAnimation by lazy { AnimationUtils.loadAnimation(context, R.anim.seat_selection_bottom_bar_out) }
 
     var headerView: PanelHeaderView
+    var container: ConstraintLayout
 
     init {
-        setBackgroundResource(R.color.trans)
+        setBackgroundColor(Attr.getBackgroundColor(context))
         gravity = Gravity.CENTER_HORIZONTAL
         orientation = VERTICAL
-
 
         headerView = PanelHeaderView(context).apply {
             layout_width = match_parent
@@ -46,11 +50,18 @@ class PanelView @JvmOverloads constructor(
         }.also {
             addView(it)
         }
+
+        container = ConstraintLayout {
+            layout_width = match_parent
+            layout_height = 0
+            weight = 1.0f
+        }
     }
 
     fun show(panelBuilder: PanelView.() -> Unit) {
         if (!isVisible()) {
             //显示底边栏
+            container.removeAllViews()
             apply(panelBuilder)
             startAnimation(bottomBarInAnimation)
             setVisibility(View.VISIBLE)
@@ -80,25 +91,37 @@ class PanelHeaderView @JvmOverloads constructor(
         gravity = Gravity.CENTER_HORIZONTAL
         orientation = HORIZONTAL
         iconIv = ImageView {
-            layout_width = 24
-            layout_height = 24
+            layout_width = 48
+            layout_height = 48
+            padding = 8
+            layout_gravity = Gravity.CENTER_VERTICAL
+
+            src = R.drawable.ic_launcher
+            background = selectableItemBackground(context)
         }
         titleTv = TextView {
             layout_width = 0
             layout_height = match_parent
             weight = 1.0f
+            setOnClickListener {
+                onTitleClick()
+            }
         }
         closeIv = ImageView {
-            layout_width = 24
-            layout_height = 24
+            layout_width = 48
+            layout_height = 48
+            padding = 8
+            layout_gravity = Gravity.CENTER_VERTICAL
+
             src = R.drawable.ic_close
+            background = selectableItemBackground(context)
             setOnClickListener {
                 onCloseClick()
             }
         }
     }
 
-    var icon: String = ""
+    var icon: String = "R.drawable.ic_launcher"
         set(value) {
             IconLoader.loadIcon(context, iconIv, value)
         }
@@ -108,4 +131,5 @@ class PanelHeaderView @JvmOverloads constructor(
             titleTv.text = value
         }
     var onCloseClick: () -> Unit = {}
+    var onTitleClick: () -> Unit = {}
 }
