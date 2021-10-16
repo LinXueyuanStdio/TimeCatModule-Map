@@ -8,6 +8,7 @@ import com.timecat.layout.ui.utils.IconLoader
 import com.timecat.middle.block.adapter.SubItem
 import com.timecat.middle.block.adapter.SubTypeCard
 import com.timecat.middle.block.ext.bindAdapter
+import com.timecat.module.map.view.Header
 import com.timecat.module.map.view.PanelView
 import com.timecat.module.map.view.source.MapTileSource
 import com.timecat.module.map.view.source.TileSourceManager
@@ -22,7 +23,7 @@ import com.timecat.module.map.view.source.TileSourceManager
 fun PanelView.PanelSwitchMap(context: Context, tileSourceManager: TileSourceManager, onSwitchMap: (source: MapTileSource) -> Unit) {
     val allSources = tileSourceManager.getAllSources()
     show {
-        headerView.title = "地图"
+        Header("地图")
         container.apply {
             RecyclerView {
                 layout_width = match_parent
